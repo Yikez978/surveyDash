@@ -1,0 +1,124 @@
+    <!doctype html>
+    <html lang="en" ng-app="myApp">
+    <head>
+        <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="style/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="style/main.css">
+        <script src="http://code.jquery.com/jquery.js"></script>
+        <script src="style/bootstrap/js/bootstrap.min.js"></script>
+        <!--Libraries-->
+        <script type="text/javascript" src="libraries/angular/angular.js"></script>
+        <script type="text/javascript" src="libraries/pouchdb/pouch.min.js"></script>
+        <script type="text/javascript" src="libraries/crypto-js/sha3.js"></script>
+        <script src="http://code.jquery.com/jquery.js"></script>
+        <!--Controllers-->
+        <!-- Script to get IP-->
+        <script language="Javascript" src="http://www.codehelper.io/api/ips/?js"></script>
+    </head>
+    <body ng-controller="surveyCtrl">
+        <center>
+            <br><br>
+            <div class="container">
+                <div class="page-header">
+                    <h1>Customer Satisfaction Survey</h1> {{dataLoadStatus}}
+                </div>
+                <div style="display: block;" class="stats">
+                    <div class="col-md-3">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="panel panel-default">
+                                  <div class="panel-heading">Metrics</div>
+                                  <div class="panel-body" style="text-align: left;">
+                                    Avg. Sat. Index: {{mean}}
+                                    <br>
+                                    Standard Deviation: {{stdDev}}
+                                    <br>
+                                    Variance: {{variance}}
+                                    <br>
+                                    Upper Bound: {{upperBound}}
+                                    <br>
+                                    Lower Bound: {{lowerBound}}
+                                    <br>
+                                    <button ng-click="genMetrics()" type="button" class="btn btn-default">Calculate</button>
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default" style="margin: 10px;">
+                                <div class="panel-heading">Outlying Data</div>
+                                    <table class="table" style="text-overflow:ellipsis;">
+                                        <th> 
+                                            Survey ID
+                                        </th>
+                                        <th>
+                                            Sat. Index
+                                        </th>
+                                        <tr ng-repeat="outlier in outliers" style="height: 10px;">
+                                            <td>
+                                                <button type="button" class="btn btn-default" ng-click="showComment(outlier.surveyId)">{{outlier.surveyId}}</button>
+                                            </td>
+                                            <td>
+                                                {{outlier.satIndex}}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    {{activeComment}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: block;" class="questions">
+                    <div class="col-md-9">
+                        <div class="panel-group" id="accordion">
+                            <div ng-repeat="question in questions | filter: type">
+                              <div class="panel panel-default">
+                                <div class="panel-heading">
+                                  <h4 class="panel-title">
+                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#{{question.questionHTMLName}}">
+                                      {{question.questionName}}
+                                    </a>
+                                  </h4>
+                                </div>
+                                <div id="{{question.questionHTMLName}}" class="panel-collapse collapse in">
+                                    <div class="panel-body">
+                                        {{question.percentages[4]}}% Very Satisfied
+                                        <div class="progress">
+                                          <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{question.percentages[4]}}%;">
+                                          </div>
+                                        </div>
+                                        {{question.percentages[3]}}% Somewhat Satisfied
+                                        <div class="progress">
+                                          <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{question.percentages[3]}}%;">  
+                                          </div>
+                                        </div>
+                                        {{question.percentages[2]}}% Indifferent
+                                        <div class="progress">    
+                                          <div class="progress-bar progress-bar-info" role="progressbar"  aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{question.percentages[2]}}%;">                                       
+                                          </div>
+                                        </div>
+                                        {{question.percentages[1]}}% Somewhat Disappointed
+                                        <div class="progress">                                       
+                                          <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{question.percentages[1]}}%;">
+                                          </div>
+                                        </div>
+                                        {{question.percentages[0]}}% Very Disappointed
+                                        <div class="progress">                                       
+                                          <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{question.percentages[0]}}%;">
+                                          </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </center>   
+    </body>
+        <script>
+            var myApp = angular.module('myApp', []);
+        </script>
+        <!--survey Management-->
+        <script type="text/javascript" src="js/survey_rev2.js"></script>
+    </html>
